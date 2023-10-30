@@ -69,7 +69,7 @@ async function run() {
 
   // get single product by id
 
-  app.get("/products/:id",verify, async(req,res)=>{
+  app.get("/products/:id", async(req,res)=>{
         try{
           const id=req.params.id;
         const query= {_id:new ObjectId(id)}
@@ -81,48 +81,67 @@ async function run() {
   })
 
 
+
+  
+
+
   //update data
 
-  //  app.put('/products/:id',async(req,res)=>{
-  //       const id=req.params.id;
-  //       const body =req.body;
-  //       console.log(body);
-
-  //        const updatedData={
-  //         $set:{
-  //              ...body,
-  //         }
-  //        }
-
-  //        const option={upsert:true}
-  //        const result=await productCollection.updateOne(id,updatedData,option)
-  //        res.send(result)
-  //  })
 
 
 
-  app.put('/products/:id', async (req, res) => {
-    const id = req.params.id;
-    const body = req.body;
-    console.log(body);
 
-    const filter = { _id:new ObjectId(id) }; // Creating a filter using the provided ID
+//   app.put('/products/:id', async (req, res) => {
+//     const id = req.params.id;
+//     const body = req.body;
+//     console.log(body);
 
-    const updatedData = {
-        $set: {
-            ...body,
-        }
-    }
+//     const filter = { _id:new ObjectId(id) }; // Creating a filter using the provided ID
 
-    const option = { upsert: true }
+//     const updatedData = {
+//         $set: {
+//             ...body,
+//         }
+//     }
 
-    try {
-        const result = await productCollection.updateOne(filter, updatedData, option);
-        res.send(result);
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Internal Server Error');
-    }
+//     const option = { upsert: true }
+
+//     try {
+//         const result = await productCollection.updateOne(filter, updatedData, option);
+//         res.send(result);
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Internal Server Error');
+//     }
+// });
+
+
+app.put('/products/:id', async (req, res) => {
+  const id = req.params.id;
+  const body = req.body;
+
+  // Check if id is valid
+  if (!ObjectId.isValid(id)) {
+      return res.status(400).send({ error: 'Invalid ID' });
+  }
+
+  const filter = { _id: new ObjectId(id) }; 
+
+  const updatedData = {
+      $set: {
+          ...body,
+      }
+  }
+
+  const option = { upsert: true }
+
+  try {
+      const result = await productCollection.updateOne(filter, updatedData, option);
+      res.send(result);
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('Internal Server Error');
+  }
 });
 
 
